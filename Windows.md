@@ -8,6 +8,7 @@ In this guide we're going to use the following tools:
 
 - C/C++ compiler (MSVC & LLVM)
 - CMake (Cross-platform Make)
+- Git
 - Vcpkg (Cross-platform pacakge management)
 - The command-line
 - Visual Studio Code
@@ -29,3 +30,21 @@ From https://visualstudio.microsoft.com/downloads/ select [Build Tools for Visua
 and launch the installer. When prompted which components to install, select the feature pack named "Desktop development with C++".
 
 ![image](imgs/DesktopDevWithCpp.png)
+
+Among the individual features list, select `C++ CMake tools for Windows` and `Clang compiler for Windows` for convenience. The prior will install CMake, our choice of cross-platform build system, while the latter will be useful when we wish to test natively, if our host code conforms closer with ISO standards.
+
+### Git
+
+
+
+### Vcpkg
+
+UX for obtaining dependencies for C/C++ projects has improved dramatically in the past few years. This guide will make use of Vcpkg, a community maintained repo of build scripts for a rapidly growing number of open-source libraries.
+
+https://github.com/microsoft/vcpkg.git
+
+### Visual Studio Code
+
+While the compiler installs, you may also fetch the installer of Visual Studio Code from code.visualstudio.com
+
+![imgage](imgs/CodeWebInstall.png)
