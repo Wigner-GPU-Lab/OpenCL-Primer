@@ -84,7 +84,9 @@ _Note: Some parts of the API may be let go of as the application is running. The
 
 ### Contexts
 
-The notion of contexts may be familiar to graphics programmers. It is essentially a virtual environment that in some regard is sealed from other such environments/contexts. They provide lightweight isolation of one part of an application from another part.
+The notion of contexts may be familiar to graphics programmers. It is essentially a virtual environment that in some regard is sealed from other such environments/contexts. They provide lightweight isolation of one part of an application from another part. The purpose of the isolation is primarily for performance reasons and not fail safety. Outside the context of OpenCL SC (Safety Critical profile) locking up a context may very well affect other contexts.
+
+API objects living in seperate contexts cannot interact with each other through API functions. `cl_event` object for instance which is the most important synchronisation primitive of OpenCL are bound to a context. Creating it in one context and syncing an operation issued in another context through it is not valid in OpenCL and should result in a `CL_INVALID_EVENT` error code. The runtime can perform much faster synchronisation if it only has to inspect device and execution state within a single context and not across all contexts (which might involve communicating with multiple devices across buses).
 
 ### Run-time kernel compilation
 
