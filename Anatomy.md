@@ -82,6 +82,10 @@ A typical OpenCL application does the following things in roughly this order:
 
 _Note: Some parts of the API may be let go of as the application is running. The device compiler may potentially be a heavy-weight runtime object, and as such has a dedicated function which unloads it from memory. Querying for platforms however triggers the ICD to dynamically load available implementations into memory. It is not possible to let unload them, even if we know we won't be using some of them in the foreseeable future._
 
+### Contexts
+
+The notion of contexts may be familiar to graphics programmers. It is essentially a virtual environment that in some regard is sealed from other such environments/contexts. They provide lightweight isolation of one part of an application from another part.
+
 ### Run-time kernel compilation
 
 OpenCL supports compiling kernels:
