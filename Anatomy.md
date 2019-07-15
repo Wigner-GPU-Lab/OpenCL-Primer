@@ -80,7 +80,7 @@ A typical OpenCL application does the following things in roughly this order:
 6. Load and compile device code (kernels, see later)
 7. Execute code on host and device as needed
 
-_Note: Some parts of the API may be let go of as the application is running. The device compiler may potentially be a heavy-weight runtime object, and as such has a dedicated function which unloads it from memory. Querying for platforms however triggers the ICD to dynamically load available implementations into memory. It is not possible to let unload them, even if we know we won't be using some of them in the foreseeable future._
+_Note: Keeping resource constrained environments in mind, some parts of the API may be let go of as the application is running. The device compiler may potentially be a heavy-weight runtime object, and as such has a dedicated function which unloads it from memory. Querying for platforms however triggers the ICD to dynamically load available implementations into memory. It is not possible to let unload them, even if we know we won't be using some of them in the foreseeable future._
 
 ### Contexts
 
