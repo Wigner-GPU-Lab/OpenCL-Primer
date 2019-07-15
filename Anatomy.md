@@ -83,3 +83,18 @@ A typical OpenCL application does the following things in roughly this order:
 _Note: Some parts of the API may be let go of as the application is running. The device compiler may potentially be a heavy-weight runtime object, and as such has a dedicated function which unloads it from memory. Querying for platforms however triggers the ICD to dynamically load available implementations into memory. It is not possible to let unload them, even if we know we won't be using some of them in the foreseeable future._
 
 ### Run-time kernel compilation
+
+OpenCL supports compiling kernels:
+
+- ahead of time, shipped with the application either as an IR (Intermediate Representation) or in platform-specific device binary
+- at run-time from source code
+
+Ultimately it comes down to the actual application which model serves it's purpose best. In OSS or non-IP sensitive applications compiling from device source code has several benefits:
+
+1. User can inspect device source code
+2. Doesn't require any platform extensions to work
+3. Allows for device-specific optimization/tuning
+
+When compiling device code (aka. kernels) ahead of time, they are compiled to some format the given platform can produce and consume. For cross-platform portability of kernel IR, applications can either produce SPIR or SPIR-V. These formats possess different degrees of portability.
+
+_SPIR (Standard Portable Intermediate Representation) was introduced in OpenCL 1.2 as means of distributing IP-sensitive device code. Unfortunately it is based on a fairly old LLVM, which is not a stable IR format. Most runtimes ship a device compiler based on Clang+LLVM. Newer versions of LLVM IR cannot easily be converted to SPIR, resulting in a growing maintenance burden. SPIR-V was introduced in OpenCL 2.1 ("V" is for Vulkan, which this IR format is shared with), which is no longer based on LLVM but is a totally seperate and stable format. OpenCL 2.1 (for various reasons) is only implemented fully by Intel runtimes, therefore it is only portable in theory. SPIR and SPIR-V play a central role in technologies built atop OpenCL, for eg. SYCL._
