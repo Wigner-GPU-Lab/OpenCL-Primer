@@ -45,9 +45,9 @@ Correct usage of the C API is extremely verbose compared to when they are wrappe
 
 The API follows a few concepts which naturally manifest in the C API (and are sometimes hidden by wrappers). It is instructive to be familiar with these concepts in general, even if you are not going to be using the C API when developing your applications. Knowing that under the hood, these calls are going to be made helps:
 
-1) appreciate the wrapper
-2) understand performance implications
-3) debug faulty code
+1. appreciate the wrapper
+2. understand performance implications
+3. debug faulty code
 
 ### Pervasive use of error codes
 
