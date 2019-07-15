@@ -27,6 +27,10 @@ OpenCL solves this issue by also naming it's library `OpenCL`, but integrating a
 
 OpenCL applications are blind to being linked to an ICD or an actual implementation, they (trivially) cannot distinguish between the two modes of operation. In reality, they really don't have two, typical usage of OpenCL is done through an ICD.
 
+#### How does it work?
+
+A typical ICD implementation queries some record for a list of libraries to load dynamically (usually via `dlopen()`) and probe for the pointer to the API functions inside. For a detailed description of how the ICD works, refer to the [ICD chapter](ICD.md).
+
 ### Platform vs. Runtime Layer
 
 The OpenCL API is segmented into two parts: the platform and the runtime layers.
@@ -34,10 +38,6 @@ The OpenCL API is segmented into two parts: the platform and the runtime layers.
 The platform layer is responsible for loading the available implementations (runtimes) at run-time and setting up all the underlying machinery to present them to the programmer in a pre-processed, easy to use manner.
 
 The runtime layer is the bulk of the API. This part defines what can be done with OpenCL and how.
-
-#### How does it work?
-
-A typical ICD implementation queries some record for a list of libraries to load dynamically (usually via `dlopen()`) and probe for the pointer to the API functions inside. For a detailed description of how the ICD works, refer to the [ICD chapter](ICD.md).
 
 ## Using the API
 
