@@ -185,7 +185,7 @@ Which will output something like
 -- Build files have been written to: C:/Users/mnagy/Source/CL-Min1/build
 ```
 
-- _(NOTE: here, we're using the cornerstone feature of Vcpkg, namely how it integrates into standard CMake workflow. CMake has no knowledge of where to look for our OpenCL SDK package obtained by Vcpkg, and there are no system include/lib directories on Windows. We could instruct every package individually where to locate itself, in the case of OpenCL for eg. via providing `-D OpenCL_INCLUDE_DIR=C:\Users\mnagy\Source\Repos\vcpkg\installed\x64-windows\include -D OpenCL_LIBRARY=C:\Users\mnagy\Source\Repos\vcpkg\installed\x64-windows\debug\lib\OpenCL.lib` on the CMake invocation. This very soon becomes tedious. CMake supports loading user-provided scripts very early during configuration allowing to hijack much of CMake's internal machinery, including finding packages. By using this so called toolchain file provided by Vcpkg, all packages (aka. ports) installed through Vcpkg will be found without further user interaction.)_
+- _(NOTE: here, we're using the cornerstone feature of Vcpkg, namely how it integrates into standard CMake workflow. CMake has no knowledge of where to look for our OpenCL SDK package obtained by Vcpkg, and there are no system include/lib directories on Windows. We could instruct every package individually where to locate itself, in the case of OpenCL for eg. via providing `-D OpenCL_INCLUDE_DIR=C:\Users\<username>\Source\Repos\vcpkg\installed\x64-windows\include -D OpenCL_LIBRARY=C:\Users\<username>\Source\Repos\vcpkg\installed\x64-windows\debug\lib\OpenCL.lib` on the CMake invocation. This very soon becomes tedious. CMake supports loading user-provided scripts very early during configuration allowing to hijack much of CMake's internal machinery, including finding packages. By using this so called toolchain file provided by Vcpkg, all packages (aka. ports) installed through Vcpkg will be found without further user interaction.)_
 
 To kick off the build, one may use CMakes build driver:
 
@@ -202,3 +202,27 @@ Once build is complete, we can run it by typing:
 ## Building within Visual Studio
 
 ## Building within Visual Studio Code
+
+To have a decent developer experience in the IDE, we will need to install a few extensions:
+
+- C/C++ by Microsoft
+- CMake
+- CMake Tools
+- OpenCL
+
+CMake Tools need to be configured in order to be able to use it properly.
+
+We installed CMake through the Visual Studio Build Tools installer, hence it's not on the PATH by default, and as such CMake Tools won't find it. Open up the settings editor and search for "cmake path". The settings pane should have a `Cmake: Cmake Path` entry. Put the full path of `cmake.exe` from your build tools install there. Something like: `C:\Kellekek\Microsoft\VisualStudio\2019\BuildTools\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe`. Reloading the window will re-initalize all extensions.
+
+Issuing the `CMake: Scan for Kits` command should populate the `cmake-tools-kits.json` file found under `C:\Users\<username>\AppData\Local\CMakeTools\cmake-tools-kits.json`. The file can be opened using the `CMake: Edit user-local CMake kits` command. The names of the Visual C++ kits are fairly long, so we can rename it to be shorter, but more importantly add the Vcpkg toolchain file for dependency detection in a setup'n'forget manner.
+
+```json
+{
+    "name": "MSVC 19",
+    "visualStudio": "VisualStudio.16.0",
+    "visualStudioArchitecture": "amd64",
+    "toolchainFile": "C:/Users/<username>/Source/Repos/vcpkg/scripts/buildsystems/vcpkg.cmake"
+}
+```
+
+If `Main.c` and the accompanying `CMakeLists.txt` were not in a folder up until now, place them in a folder and open the folder with Code.
