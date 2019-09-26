@@ -203,16 +203,33 @@ Once build is complete, we can run it by typing:
 
 ## Building within Visual Studio Code
 
-To have a decent developer experience in the IDE, we will need to install a few extensions:
+To have a decent developer experience in the IDE, we will need to install a few extensions. (On how to install extensions, refer to the [corresponding docs](https://code.visualstudio.com/docs/editor/extension-gallery).)
 
 - C/C++ by Microsoft
 - CMake
 - CMake Tools
+- CMake Test Explorer
 - OpenCL
 
-CMake Tools need to be configured in order to be able to use it properly.
+These extensions will help us author, navigate, build, test, debug code. The OpenCL extension provides syntax highlight for OpenCL device code and provide in-editor documentation for API functions.
+
+### Configuring the C/C++ extension
+
+In order for all the features of IntelliSense and code navigation to shine, the extension has to know what compiler switches were used when building each and every source file. Lucky for us, the extension plays along nicely with CMake Tools, therefore we'll just tell it to use CMake as a configuration provider whenever possible without any prompts. (If it fails, it will still give us the usual dialog window.)
+
+In Settings, search for "provider" which will let us set `C_Cpp: Default: Configuration Provider` which if one cannot set in the UI, one has to set the following value in `settings.json`:
+
+```json
+"C_Cpp.default.configurationProvider": "vector-of-bool.cmake-tools"
+```
+
+### Configuring CMake & CMake Tools
+
+CMake Tools need to be configured in order to be able to use it properly. For an extensive guide, refer to the [docs of the extension](https://vector-of-bool.github.io/docs/vscode-cmake-tools/index.html).
 
 We installed CMake through the Visual Studio Build Tools installer, hence it's not on the PATH by default, and as such CMake Tools won't find it. Open up the settings editor and search for "cmake path". The settings pane should have a `Cmake: Cmake Path` entry. Put the full path of `cmake.exe` from your build tools install there. Something like: `C:\Kellekek\Microsoft\VisualStudio\2019\BuildTools\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe`. Reloading the window will re-initalize all extensions.
+
+To eliminate most cases of having to .gitignore our build folder inside the source tree, we'll instruct CMake to build inside the hidden .vscode folder. Search in settings for "build directory" and in the entry titled `Cmake: Build Directory` write: `${workspaceRoot}/.vscode/build`.
 
 Issuing the `CMake: Scan for Kits` command should populate the `cmake-tools-kits.json` file found under `C:\Users\<username>\AppData\Local\CMakeTools\cmake-tools-kits.json`. The file can be opened using the `CMake: Edit user-local CMake kits` command. The names of the Visual C++ kits are fairly long, so we can rename it to be shorter, but more importantly add the Vcpkg toolchain file for dependency detection in a setup'n'forget manner.
 
@@ -225,4 +242,45 @@ Issuing the `CMake: Scan for Kits` command should populate the `cmake-tools-kits
 }
 ```
 
+I would also suggest enabling `Cmake: Configure On Open` to save some time when opening CMake projects.
+
+### Building
+
 If `Main.c` and the accompanying `CMakeLists.txt` were not in a folder up until now, place them in a folder and open the folder with Code.
+
+Selecting the kit we created earlier, after opening both files and dragging them side-by-side, one may arrive at a configured project looking something like this:
+
+![image](imgs/VSCodeOpenHelloOpenCL.png)
+
+Pressing the little gear icon on the bottom status bar will the CMake build driver. Clicking on the `[all]` button next to it, one may change build targets.
+
+### Debugging
+
+To launch our program through the debugger, one may click the little button on the bottom status bar and select the target we wish to launch. It will display all messages from the debugger in the `Debug Console` interleaved with program standard output in different colors.
+
+![image](imgs/VSCodeDebugHelloOpenCL.png)
+
+On all the capabilities of debugging using the C/C++ extension [refer to its docs](https://code.visualstudio.com/docs/cpp/config-msvc) and on how to obtain the path to executables for setting up `launch.json` refer to the [corresponding CMake Tools docs section](https://vector-of-bool.github.io/docs/vscode-cmake-tools/debugging.html#debugging-with-cmake-tools-and-launch-json).
+
+### Testing
+
+If we want to leverage the CTest unit testing framework, we could add a few lines to our `CMakeLists.txt` file to check if our program executed fine (exited with return code 0).
+
+```CMake
+if(BUILD_TESTING)
+  include(CTest)
+
+  add_test(NAME PlatformEnumeration
+           COMMAND ${PROJECT_NAME})
+endif(BUILD_TESTING)
+```
+
+Beside adding these few lines to add a test, we should also flip the canonical `BUILD_TESTING` switch during configuration (and not hardcode it in our scripts). Under Settings, search for "configure args" and click the `Add Item` button. In the text box, enter `-DBUILD_TESTING=ON`.
+
+Invoke the `CMake: Configure` command. In the Test Explorer sidebar menu our newly added test should show up. (Currently may require to hit the refresh button on the top).
+
+![image](imgs/VSCodeTestHelloOpenCL.png)
+
+Hitting either the "play" button (`Test Explorer: run all tests`) or selectively the next to the test name (needs mouse hover to display), the test will run and show whether it passed or not. If everything went fine, it will show a green checkmark to indicate success.
+
+![image](imgs/VSCodeTestedHelloOpenCL.png)
